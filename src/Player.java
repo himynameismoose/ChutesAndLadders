@@ -16,7 +16,7 @@ public class Player {
      */
     public Player(String name) {
         this.name = name;
-        setPosition(0);
+        position = 0;
     }
 
     /**
@@ -43,7 +43,7 @@ public class Player {
      * @param position The position to change
      */
     public void changePosition(int position) {
-        setPosition(position);
+        this.position += position;
     }
 
     /**
@@ -66,8 +66,12 @@ public class Player {
 
     /**
      * The player "spins" the spinner and moves to a new position
+     *
+     * @param spinner The spinner object to simulate a spin
      */
     public void spin(Spinner spinner) {
-
+        int newSpin = spinner.getSpin();
+        System.out.println(name + "'s spin was: " + newSpin);
+        position += newSpin;
     }
 }
