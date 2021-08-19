@@ -15,6 +15,8 @@ public class Display {
     private static final int LAST_SQUARE = 100;                         // The last square on the game board
     private static final int POSITIONS = 2;                             // Represents the start and end positions
                                                                         // of the chutes and ladders
+    private static final int start = 0;                                 // The start position of chute/ladder
+    private static final int end = 1;                                   // The end position of chute/ladder
 
     // 2D arrays to represent the number of chutes and ladders and their start and end positions
     private static int[][] ladders;
@@ -27,27 +29,6 @@ public class Display {
      */
     public static void main(String[] args) throws FileNotFoundException {
         start();
-        Spinner spinner = new Spinner(SPINNER); // Create Spinner Instance
-        boolean gameActive = true;              // Store game state
-        String winner = "";                     // Store game winner
-        // Game logic
-        while (gameActive) {
-            // Have the players take turns
-            for (Player player : PLAYERS) {
-                if (winner.equals("")) {
-                    player.spin(spinner);
-                    System.out.println(player.getName() + " position is: " +
-                            player.getPosition());
-                }
-
-                if (player.getPosition() > LAST_SQUARE) {
-                    winner = player.getName();
-                    gameActive = false;
-                }
-            }
-        }
-
-        System.out.println(winner + " is the winner!");
     }
 
     /**
@@ -67,6 +48,7 @@ public class Display {
         createPlayers();
         buildLadders();
         buildChutes();
+        spin();
     }
 
     /**
@@ -110,6 +92,32 @@ public class Display {
     }
 
     /**
+     * Each player will take turns spinning until player reaches the 100 square
+     */
+    public static void spin() {
+        Spinner spinner = new Spinner(SPINNER); // Create Spinner Instance
+        boolean gameActive = true;              // Store game state
+        String winner = "";                     // Store game winner
+        // Game logic
+        while (gameActive) {
+            // Have the players take turns
+            for (Player player : PLAYERS) {
+                if (winner.equals("")) {
+                    player.spin(spinner);
+                    System.out.println(player.getName() + " position is: " + player.getPosition());
+                }
+
+                if (player.getPosition() > LAST_SQUARE) {
+                    winner = player.getName();
+                    gameActive = false;
+                }
+            }
+        }
+
+        System.out.println(winner + " is the winner!");
+    }
+
+    /**
      * Counts the number of lines in file and returns the number of lines in file
      *
      * @param file The name of the file
@@ -139,7 +147,7 @@ public class Display {
         ladders = new int[laddersTotal][POSITIONS];
 
         Scanner scanner = new Scanner(file);
-        int start = 0, end = 1, index = 0;
+        int index = 0;
 
         while (scanner.hasNextLine()) {
             int ladderStart = scanner.nextInt();
@@ -158,7 +166,7 @@ public class Display {
         chutes = new int[chutesTotal][POSITIONS];
 
         Scanner scanner = new Scanner(file);
-        int start = 0, end = 1, index = 0;
+        int index = 0;
 
         while (scanner.hasNextLine()) {
             int chuteStart = scanner.nextInt();
