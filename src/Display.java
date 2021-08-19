@@ -66,7 +66,7 @@ public class Display {
         welcome();
         createPlayers();
         buildLadders();
-        //buildChutes();
+        buildChutes();
     }
 
     /**
@@ -117,7 +117,6 @@ public class Display {
      * @throws FileNotFoundException if file does not exists
      */
     public static int countLinesInFile(File file) throws FileNotFoundException {
-        System.out.println("counting lines");
         Scanner scanner = new Scanner(file);
 
         int lines = 0;
@@ -135,11 +134,9 @@ public class Display {
      * @throws FileNotFoundException if file does not exists
      */
     public static void buildLadders() throws FileNotFoundException {
-        System.out.println("Building ladders");
         File file = new File("src/Ladders.txt");
         int laddersTotal = countLinesInFile(file);
         ladders = new int[laddersTotal][POSITIONS];
-        System.out.println(ladders.length);
 
         Scanner scanner = new Scanner(file);
         int start = 0, end = 1, index = 0;
@@ -150,6 +147,25 @@ public class Display {
 
             ladders[index][start] = ladderStart;
             ladders[index][end] = ladderEnd;
+
+            index++;
+        }
+    }
+
+    public static void buildChutes() throws FileNotFoundException {
+        File file = new File("src/Chutes.txt");
+        int chutesTotal = countLinesInFile(file);
+        chutes = new int[chutesTotal][POSITIONS];
+
+        Scanner scanner = new Scanner(file);
+        int start = 0, end = 1, index = 0;
+
+        while (scanner.hasNextLine()) {
+            int chuteStart = scanner.nextInt();
+            int chuteEnd = scanner.nextInt();
+
+            chutes[index][start] = chuteStart;
+            chutes[index][end] = chuteEnd;
 
             index++;
         }
