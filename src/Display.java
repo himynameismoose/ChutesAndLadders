@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
@@ -11,15 +13,20 @@ public class Display {
     private static final int SPINNER = 6;                               // The spinner will land between 1-6
     private static final Player[] PLAYERS = new Player[NUM_OF_PLAYERS]; // An array to hold players of the game
     private static final int LAST_SQUARE = 100;                         // The last square on the game board
+    private static final int POSITIONS = 2;                             // Represents the start and end positions
+                                                                        // of the chutes and ladders
+
+    // 2D arrays to represent the number of chutes and ladders and their start and end positions
+    private static int[][] ladders;
+    private static int[][] chutes;
 
     /**
      * This starts the application
      *
      * @param args command line string arguments
      */
-    public static void main(String[] args) {
-        welcome();
-        createPlayers();
+    public static void main(String[] args) throws FileNotFoundException {
+        start();
         Spinner spinner = new Spinner(SPINNER); // Create Spinner Instance
         boolean gameActive = true;              // Store game state
         String winner = "";                     // Store game winner
@@ -27,9 +34,11 @@ public class Display {
         while (gameActive) {
             // Have the players take turns
             for (Player player : PLAYERS) {
-                player.spin(spinner);
-                System.out.println(player.getName() + " position is: " +
-                        player.getPosition());
+                if (winner.equals("")) {
+                    player.spin(spinner);
+                    System.out.println(player.getName() + " position is: " +
+                            player.getPosition());
+                }
 
                 if (player.getPosition() > LAST_SQUARE) {
                     winner = player.getName();
@@ -46,6 +55,18 @@ public class Display {
      */
     public static void welcome() {
         System.out.println("\nLet's play Chutes and Ladders!");
+    }
+
+    /**
+     * Starts the game
+     *
+     * @throws FileNotFoundException if file does not exists
+     */
+    public static void start() throws FileNotFoundException {
+        welcome();
+        createPlayers();
+        buildLadders();
+        //buildChutes();
     }
 
     /**
@@ -83,6 +104,52 @@ public class Display {
 
             if (index != PLAYERS.length - 1 && PLAYERS[index + 1] != null)
                 System.out.print(", ");
+
+            index++;
+        }
+    }
+
+    /**
+     * Counts the number of lines in file and returns the number of lines in file
+     *
+     * @param file The name of the file
+     *
+     * @throws FileNotFoundException if file does not exists
+     */
+    public static int countLinesInFile(File file) throws FileNotFoundException {
+        System.out.println("counting lines");
+        Scanner scanner = new Scanner(file);
+
+        int lines = 0;
+        while (scanner.hasNextLine()) {
+            scanner.nextLine();
+            lines++;
+        }
+
+        return lines;
+    }
+
+    /**
+     * Builds the ladders of the game stored in ladders.txt
+     *
+     * @throws FileNotFoundException if file does not exists
+     */
+    public static void buildLadders() throws FileNotFoundException {
+        System.out.println("Building ladders");
+        File file = new File("src/Ladders.txt");
+        int laddersTotal = countLinesInFile(file);
+        ladders = new int[laddersTotal][POSITIONS];
+        System.out.println(ladders.length);
+
+        Scanner scanner = new Scanner(file);
+        int start = 0, end = 1, index = 0;
+
+        while (scanner.hasNextLine()) {
+            int ladderStart = scanner.nextInt();
+            int ladderEnd = scanner.nextInt();
+
+            ladders[index][start] = ladderStart;
+            ladders[index][end] = ladderEnd;
 
             index++;
         }
