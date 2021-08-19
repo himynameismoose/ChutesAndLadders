@@ -104,6 +104,8 @@ public class Display {
             for (Player player : PLAYERS) {
                 if (winner.equals("")) {
                     player.spin(spinner);
+                    checkLadder(player);
+                    checkChute(player);
                     System.out.println(player.getName() + " position is: " + player.getPosition());
                 }
 
@@ -137,7 +139,7 @@ public class Display {
     }
 
     /**
-     * Builds the ladders of the game stored in ladders.txt
+     * Builds the ladders of the game stored in Ladders.txt
      *
      * @throws FileNotFoundException if file does not exists
      */
@@ -160,6 +162,11 @@ public class Display {
         }
     }
 
+    /**
+     * Builds the chutes of the game stored in Chutes.txt
+     *
+     * @throws FileNotFoundException if file does not exists
+     */
     public static void buildChutes() throws FileNotFoundException {
         File file = new File("src/Chutes.txt");
         int chutesTotal = countLinesInFile(file);
@@ -176,6 +183,34 @@ public class Display {
             chutes[index][end] = chuteEnd;
 
             index++;
+        }
+    }
+
+    /**
+     * Checks if a player has landed on a ladder
+     *
+     * @param player the player
+     */
+    public static void checkLadder(Player player) {
+        for (int[] ladder : ladders) {
+            if (player.getPosition() == ladder[start]) {
+                player.setPosition(ladder[end]);
+                System.out.println(player.getName() + " landed on a ladder!");
+            }
+        }
+    }
+
+    /**
+     * Checks if a player has landed on a chute
+     *
+     * @param player the player
+     */
+    public static void checkChute(Player player) {
+        for (int[] chute : chutes) {
+            if (player.getPosition() == chute[start]) {
+                player.setPosition(chute[end]);
+                System.out.println(player.getName() + " landed on a chute!");
+            }
         }
     }
 }
