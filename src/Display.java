@@ -31,6 +31,7 @@ public class Display {
      */
     public static void main(String[] args) throws FileNotFoundException, InterruptedException {
         start();
+        playAgain();
     }
 
     /**
@@ -252,5 +253,13 @@ public class Display {
                 System.out.println(player.getName() + " landed on a chute!");
             }
         }
+    }
+
+    public static void playAgain() throws FileNotFoundException, InterruptedException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Do you want to play again? (y/n) ");
+        String answer = scanner.next().toLowerCase();
+        if (answer.equals("y"))
+            start();
     }
 }
