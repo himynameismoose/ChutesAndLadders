@@ -29,24 +29,6 @@ public class Player {
     }
 
     /**
-     * Sets the player's name
-     *
-     * @param name The player's name to be set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Change the player's position after spin
-     *
-     * @param position The position to change
-     */
-    public void changePosition(int position) {
-        this.position += position;
-    }
-
-    /**
      * Gets the player's position
      *
      * @return returns player's current position
@@ -69,7 +51,8 @@ public class Player {
      *
      * @param spinner The spinner object to simulate a spin
      */
-    public void spin(Spinner spinner) {
+    public void spin(Spinner spinner) throws InterruptedException {
+        Thread.sleep(500);
         int newSpin = spinner.getSpin();
         System.out.println(name + "'s spin was: " + newSpin);
         position += newSpin;
