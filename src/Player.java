@@ -6,7 +6,7 @@
  */
 public class Player {
     // Class fields
-    private String name;    // Stores the Name of the Player instance
+    private final String NAME;    // Stores the Name of the Player instance
     private int position;   // Stores the player's position on the game board
 
     /**
@@ -15,7 +15,7 @@ public class Player {
      * @param name Sets the player's name
      */
     public Player(String name) {
-        this.name = name;
+        this.NAME = name;
         position = 0;
     }
 
@@ -43,7 +43,7 @@ public class Player {
      * @return returns the player's name
      */
     public String getName() {
-        return name;
+        return NAME;
     }
 
     /**
@@ -54,7 +54,7 @@ public class Player {
     public void spin(Spinner spinner) throws InterruptedException {
         Thread.sleep(500);
         int newSpin = spinner.getSpin();
-        System.out.println(name + "'s spin was: " + newSpin);
+        System.out.println(NAME + "'s spin was: " + newSpin);
         position += newSpin;
     }
 }
