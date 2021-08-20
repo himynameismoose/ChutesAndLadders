@@ -9,25 +9,27 @@ import java.util.Scanner;
  * @version 1.0
  */
 public class Display {
-    private static final int NUM_OF_PLAYERS = 4;                        // The max number of players
-    private static final int SPINNER = 6;                               // The spinner will land between 1-6
-    private static final Player[] PLAYERS = new Player[NUM_OF_PLAYERS]; // An array to hold players of the game
-    private static final int LAST_SQUARE = 100;                         // The last square on the game board
-    private static final int POSITIONS = 2;                             // Represents the start and end positions
-                                                                        // of the chutes and ladders
-    private static final int start = 0;                                 // The start position of chute/ladder
-    private static final int end = 1;                                   // The end position of chute/ladder
+    private static final int SPINNER = 6;           // The spinner will land between 1-6
+    private static final int BOARD_SIZE = 100;      // The last square on the game board
+    private static final int POSITIONS = 2;         // Represents the start and end positions
+                                                    // of the chutes and ladders
+    private static final int start = 0;             // The start position of chute/ladder
+    private static final int end = 1;               // The end position of chute/ladder
 
     // 2D arrays to represent the number of chutes and ladders and their start and end positions
     private static int[][] ladders;
     private static int[][] chutes;
 
+    private static Player[] players;    // Array to hold the players of the game
+
     /**
-     * This starts the application
+     * The start of the application
      *
-     * @param args command line string arguments
+     * @param args command line arguments
+     * @throws FileNotFoundException if file does not exists
+     * @throws InterruptedException if thread cannot sleep
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, InterruptedException {
         start();
     }
 
@@ -39,11 +41,12 @@ public class Display {
     }
 
     /**
-     * Starts the game
+     * This method starts the game
      *
      * @throws FileNotFoundException if file does not exists
+     * @throws InterruptedException if thread cannot sleep
      */
-    public static void start() throws FileNotFoundException {
+    public static void start() throws FileNotFoundException, InterruptedException {
         welcome();
         createPlayers();
         buildLadders();
@@ -53,25 +56,60 @@ public class Display {
 
     /**
      * This will create players for the game
+     *
+     * @throws InterruptedException if thread cannot sleep
      */
-    public static void createPlayers() {
+    public static void createPlayers() throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\nBefore we can play, let's create players for the game:");
-        int playerCount = 0;
-        boolean addNewPlayer = true;
-        while (playerCount < NUM_OF_PLAYERS && addNewPlayer) {
-            System.out.print("Name: ");
-            Player player = new Player(scanner.nextLine());
-            PLAYERS[playerCount] = player;
-            playerCount++;
-            System.out.print("Do you want to add another player? (y/n) ");
-            String answer = scanner.nextLine().toLowerCase();
+        Thread.sleep(2000);
 
-            if (answer.equals("n"))
-                addNewPlayer = false;
+        int numOfPlayers = getNumOfPlayers(scanner);    // Get the number of players from user
+        players = new Player[numOfPlayers];             // Initialize the size of players array
+
+        for (int i = 0; i < players.length; i++) {
+            System.out.print("Name of Player " + (i + 1) + ": ");
+            Player player = new Player(scanner.next());
+            players[i] = player;
         }
 
         printPlayers();
+    }
+
+    /**
+     * This method is to ask the user how many players will be playing.
+     * The game allows for 2-4 players. Returns the number of players.
+     *
+     * @param scanner for user inputs
+     * @return the number of players
+     * @throws InterruptedException if thread cannot sleep
+     */
+    public static int getNumOfPlayers(Scanner scanner) throws InterruptedException {
+        int numOfPlayers = 0;
+        int minOfPlayers = 2, maxOfPlayers = 4; // Min and max of players allowed
+
+        do {
+            System.out.print("How many players will be playing? (Enter between 2-4) ");
+
+            try {
+                numOfPlayers = Integer.parseInt(scanner.next());
+
+                if (numOfPlayers < minOfPlayers)
+                    System.out.println("We need at least " + minOfPlayers + " players");
+                else if (numOfPlayers > maxOfPlayers)
+                    System.out.println(numOfPlayers + " is too many. The max is " + maxOfPlayers);
+
+            } catch (NumberFormatException exception) {
+                System.out.println("Sorry, let's try that again.");
+                Thread.sleep(1000);
+            }
+            Thread.sleep(500);
+        } while (numOfPlayers < minOfPlayers || numOfPlayers > maxOfPlayers);
+
+        Thread.sleep(500);
+        System.out.println(numOfPlayers + " players it is!");
+
+        return numOfPlayers;
     }
 
     /**
@@ -81,27 +119,29 @@ public class Display {
         System.out.print("The players are: ");
         int index = 0;
 
-        while (index < PLAYERS.length && PLAYERS[index] != null) {
-            System.out.print(PLAYERS[index].getName());
+        while (index < players.length && players[index] != null) {
+            System.out.print(players[index].getName());
 
-            if (index != PLAYERS.length - 1 && PLAYERS[index + 1] != null)
+            if (index != players.length - 1 && players[index + 1] != null)
                 System.out.print(", ");
 
             index++;
         }
+
+        System.out.println();
     }
 
     /**
      * Each player will take turns spinning until player reaches the 100 square
      */
-    public static void spin() {
+    public static void spin() throws InterruptedException {
         Spinner spinner = new Spinner(SPINNER); // Create Spinner Instance
         boolean gameActive = true;              // Store game state
         String winner = "";                     // Store game winner
         // Game logic
         while (gameActive) {
             // Have the players take turns
-            for (Player player : PLAYERS) {
+            for (Player player : players) {
                 if (winner.equals("")) {
                     player.spin(spinner);
                     checkLadder(player);
@@ -109,7 +149,7 @@ public class Display {
                     System.out.println(player.getName() + " position is: " + player.getPosition());
                 }
 
-                if (player.getPosition() > LAST_SQUARE) {
+                if (player.getPosition() >= BOARD_SIZE) {
                     winner = player.getName();
                     gameActive = false;
                 }
