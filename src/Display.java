@@ -133,7 +133,9 @@ public class Display {
     }
 
     /**
-     * Each player will take turns spinning until player reaches the 100 square
+     * Players will take turns spinning
+     *
+     * @throws InterruptedException if thread cannot sleep
      */
     public static void spin() throws InterruptedException {
         Spinner spinner = new Spinner(SPINNER); // Create Spinner Instance
@@ -164,7 +166,6 @@ public class Display {
      * Counts the number of lines in file and returns the number of lines in file
      *
      * @param file The name of the file
-     *
      * @throws FileNotFoundException if file does not exists
      */
     public static int countLinesInFile(File file) throws FileNotFoundException {
@@ -255,11 +256,29 @@ public class Display {
         }
     }
 
+    /**
+     * Prompts the user to play again
+     *
+     * @throws FileNotFoundException if files does not exists
+     * @throws InterruptedException if thread cannot sleep
+     */
     public static void playAgain() throws FileNotFoundException, InterruptedException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Do you want to play again? (y/n) ");
         String answer = scanner.next().toLowerCase();
         if (answer.equals("y"))
             start();
+        else
+            goodbye();
+    }
+
+    /**
+     * Prints the end of game
+     *
+     * @throws InterruptedException if thread cannot sleep
+     */
+    public static void goodbye() throws InterruptedException {
+        Thread.sleep(500);
+        System.out.println("Thanks for playing Chutes and Ladders!");
     }
 }
