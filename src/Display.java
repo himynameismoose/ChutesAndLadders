@@ -141,18 +141,27 @@ public class Display {
         Spinner spinner = new Spinner(SPINNER); // Create Spinner Instance
         boolean gameActive = true;              // Store game state
         String winner = "";                     // Store game winner
+        int playerLocation;
         // Game logic
         while (gameActive) {
             // Have the players take turns
             for (Player player : players) {
                 if (winner.equals("")) {
+                    playerLocation = player.getPosition();  // Store the player's location
                     player.spin(spinner);
-                    checkLadder(player);
-                    checkChute(player);
+                    // Check player's position after spin
+                    if (player.getPosition() > BOARD_SIZE) {
+                        System.out.println("Sorry, you must land on exactly " + BOARD_SIZE);
+                        player.setPosition(playerLocation);
+                    } else {
+                        checkLadder(player);
+                        checkChute(player);
+                    }
+
                     System.out.println(player.getName() + " position is: " + player.getPosition());
                 }
 
-                if (player.getPosition() >= BOARD_SIZE) {
+                if (player.getPosition() == BOARD_SIZE) {
                     winner = player.getName();
                     gameActive = false;
                 }
